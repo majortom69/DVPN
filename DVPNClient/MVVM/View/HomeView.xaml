@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="DowngradVPN.MVVM.View.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             
+             xmlns:local="clr-namespace:DowngradVPN.MVVM.View"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             d:DesignHeight="530" d:DesignWidth="360">
+    <StackPanel>
+
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 15 20 0">
+            
+            <Button Margin="10 10 130 10" x:Name="signOutBtn"
+                    Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                    Height="30" materialDesign:ShadowAssist.Darken="True"
+                    materialDesign:ButtonAssist.CornerRadius="5"
+                    FontSize="16" Content="Sign Out" 
+                    Command="{Binding SignOutCommand}" />
+            <RadioButton IsChecked="True" x:Name="udpRadioButton"  Content="UDP" GroupName="Protocol" Margin="10"/>
+            <RadioButton x:Name="tcpRadioButton" Content="TCP" GroupName="Protocol" Margin="10"/>
+        </StackPanel>
+        <Button x:Name="powerBtn" Click="OnClick3" Width="150" Height="150" Margin="0 20 0 0 " 
+                    Style="{StaticResource MaterialDesignFloatingActionButton}" 
+                    materialDesign:ButtonAssist.CornerRadius="75" 
+                    materialDesign:ShadowAssist.Darken="True">
+            <Button.Content>
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <materialDesign:PackIcon x:Name="PowerIcon" Kind="Power" Width="50" Height="50" Visibility="Visible"/>
+                    <ProgressBar x:Name="LoadingSpinner" Width="50" Height="50" Visibility="Collapsed"
+                                 IsIndeterminate="True" />
+                </Grid>
+            </Button.Content>
+        </Button>
+        <ComboBox x:Name="CountryComboBox" Width="300" Margin="10" Height="50"
+                  HorizontalAlignment="Center"
+                  VerticalContentAlignment="Center"
+                  SelectionChanged="CountryComboBox_SelectionChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Flag Image -->
+                        <Image Source="{Binding FlagImage}" Width="30" Height="30" Margin="5 0 15 0" VerticalAlignment="Center" />
+
+                        <!-- Country Name -->
+                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontSize="18" Grid.Column="1" />
+
+                        <!-- Progress Bar -->
+                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                         Width="18" Height="18" 
+                         Value="{Binding usage}" 
+                         VerticalAlignment="Center" 
+                         Margin="10 0 0 0" Grid.Column="2">
+                            <ProgressBar.LayoutTransform>
+                                <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="2" ScaleY="2"/>
+                            </ProgressBar.LayoutTransform>
+                        </ProgressBar>
+                    </Grid>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        
+        <TextBox Name="LogTextBox"  Margin="20 15 20 0" Height="210" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+    </StackPanel>
+</UserControl>

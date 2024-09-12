@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="DowngradVPN.MVVM.View.SigninView"
+              
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             
+             xmlns:local="clr-namespace:DowngradVPN.MVVM.View"
+             xmlns:viewModel="clr-namespace:DowngradVPN.MVVM.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="530" d:DesignWidth="360">
+    
+    <materialDesign:Card UniformCornerRadius="0" Background="{DynamicResource MaterialDesign}" Margin="20">
+        <StackPanel>
+            <!--<Rectangle Height="100" RadiusX="5" RadiusY="5">
+    <Rectangle.Fill>
+        <ImageBrush ImageSource="Images/logo3.png"/>
+    </Rectangle.Fill>
+</Rectangle>-->
+
+            <TextBlock Margin="0 65 0 5" HorizontalAlignment="Center" FontSize="28"
+           FontWeight="Bold" Text="Sign in"/>
+
+            <TextBlock  FontSize = "17" FontWeight="SemiBold" HorizontalAlignment="Center"
+            Text="Enter you DowngradVPN account details"/>
+
+            <TextBox  Margin="0 30 0 0" x:Name="txtUsername" FontSize="18"
+          materialDesign:HintAssist.Hint="Enter Username" BorderThickness="2"
+          BorderBrush="{DynamicResource MaterialDesignDivider}"
+          Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+            <PasswordBox Margin="0 20 0 0" x:Name="txtPassword" FontSize="18"
+             materialDesign:HintAssist.Hint="Enter Password" BorderThickness="2"
+             BorderBrush="{DynamicResource MaterialDesignDivider}"
+             Style="{StaticResource MaterialDesignOutlinedPasswordBox}"/>
+
+            <Button Margin="0 20 0 0" x:Name="signinBtn" 
+                Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                Height="53" materialDesign:ShadowAssist.Darken="True"   
+                materialDesign:ButtonAssist.CornerRadius="5"
+                FontSize="18" Content="Sign in" Command="{Binding HomeViewCommand}"/>
+
+
+
+            <Button Margin=" 0 20 0 0" x:Name="signupBtn" Style="{StaticResource MaterialDesignFlatButton}"
+        materialDesign:ShadowAssist.Darken="True" Height="53" materialDesign:ButtonAssist.CornerRadius="5"
+        FontSize="18" Content="Create Account"/>
+        </StackPanel>
+    </materialDesign:Card>
+        
+</UserControl>
