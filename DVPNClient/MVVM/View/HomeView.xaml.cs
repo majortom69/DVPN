@@ -72,20 +72,20 @@ namespace DowngradVPN.MVVM.View
         public HomeView(MainViewModel viewModel)
         {
             InitializeComponent();
-            ShowSpinner(true); // Show spinner until data is fetched
+            ShowSpinner(true); 
             Loaded += async (s, e) =>
             {
                 await InitializeData(viewModel);
-                ShowSpinner(false); // Hide spinner after data is ready
+                ShowSpinner(false);
             };
         }
 
         private async Task InitializeData(MainViewModel viewModel)
         {
-            await viewModel.FetchServersAsync(); // Wait for data
-            InitializeCountries(); // Initialize countries after data is fetched
+            await viewModel.FetchServersAsync();
+            InitializeCountries(); 
             CountryComboBox.ItemsSource = Countries;
-            CountryComboBox.SelectedIndex = Countries.Any() ? 0 : -1; // Select first if available
+            CountryComboBox.SelectedIndex = Countries.Any() ? 0 : -1; 
         }
 
 
@@ -95,7 +95,7 @@ namespace DowngradVPN.MVVM.View
             {
                 AppendLog($"Selected Country: {selectedCountry.Name}");
 
-                // Fetch the client config file from the server asynchronously
+                
                 //await DownloadClientConfig(selectedCountry.id);
                 reservedServerID = selectedCountry.id;
 
@@ -115,7 +115,7 @@ namespace DowngradVPN.MVVM.View
 
                     if (response.IsSuccessStatusCode)
                     {
-                        // Read the Client ID from the headers
+                        
                         if (response.Headers.Contains("X-Client-ID"))
                         {
 
@@ -123,7 +123,7 @@ namespace DowngradVPN.MVVM.View
                             AppendLog($"Reserved Client ID: {ClientManager.ReservedClientID}");
                         }
 
-                        // Save the client config
+                       
                         var clientConfig = await response.Content.ReadAsByteArrayAsync();
                         string filePath = Path.Combine(Environment.CurrentDirectory, "client.ovpn");
                         File.WriteAllBytes(filePath, clientConfig);
@@ -181,7 +181,7 @@ namespace DowngradVPN.MVVM.View
             string protocol = udpRadioButton.IsChecked == true ? "udp" : "tcp";
             
             var processManager = ProcessManager.Instance;
-            processManager.InitializeProcess(); // Re-initialize the process if needed
+            processManager.InitializeProcess();
             var openVpnProcess = processManager.OurProcess;
 
             ProcessStartInfo startInfo = new ProcessStartInfo

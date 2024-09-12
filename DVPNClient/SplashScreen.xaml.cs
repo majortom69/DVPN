@@ -92,7 +92,7 @@ namespace DowngradVPN
         private void OpenMainWindow()
         {
             MainWindow mainWindow = new MainWindow();
-            Application.Current.MainWindow = mainWindow; // Set the main window to the new MainWindow instance
+            Application.Current.MainWindow = mainWindow;
             mainWindow.Show();
             this.Close();
         }
@@ -108,14 +108,14 @@ namespace DowngradVPN
 
                 if (serverManifest != null && !CompareManifests(localManifest, serverManifest))
                 {
-                    // If the manifests differ, run the updater
+                   
                     MessageBox.Show("Manifests differ. Starting the updater...");
                     RunUpdater();
                     Application.Current.Shutdown();
                 }
                 else
                 {
-                    // If manifests are identical or server manifest is null, proceed
+                    
                     MessageBox.Show("No updates found. Starting main app...");
                     
                 }
@@ -123,7 +123,7 @@ namespace DowngradVPN
             else
             {
                 MessageBox.Show("Local manifest not found. Starting the updater...");
-                // If no local manifest, assume an update is required
+                
                 RunUpdater();
                 Application.Current.Shutdown();
             }
@@ -170,12 +170,12 @@ namespace DowngradVPN
             return localManifest == serverManifest;
         }
 
-        // Method to run the updater
+        
         private void RunUpdater()
         {
             try
             {
-                // Get the absolute path to the updater executable
+                
                 string updaterPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "updater", "update.exe");
 
                 if (File.Exists(updaterPath))
@@ -184,7 +184,7 @@ namespace DowngradVPN
                     {
                         FileName = updaterPath,
                         UseShellExecute = true,
-                        WorkingDirectory = Path.GetDirectoryName(updaterPath) // Set the working directory to the updater folder
+                        WorkingDirectory = Path.GetDirectoryName(updaterPath) 
                     });
                 }
                 else

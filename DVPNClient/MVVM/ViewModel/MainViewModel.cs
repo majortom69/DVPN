@@ -24,7 +24,7 @@ namespace DowngradVPN.MVVM.ViewModel
 
         public static class GlobalData
         {
-            // Static property to hold the deserialized data
+            
             public static ResponseJSON SerializedJson { get; set; }
         }
 
@@ -81,11 +81,11 @@ namespace DowngradVPN.MVVM.ViewModel
             {
                 var endpoint = new Uri("http://147.45.77.19:8080/servers");
 
-                // Prepare the JSON payload with UserData.Id
+                
                 var payload = new { user_id = UserData.Id };
                 var requestData = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 
-                var result = await client.PostAsync(endpoint, requestData); // Async call
+                var result = await client.PostAsync(endpoint, requestData);
                 var json = await result.Content.ReadAsStringAsync(); // Read response as async
 
                 if (result.IsSuccessStatusCode)
@@ -106,8 +106,6 @@ namespace DowngradVPN.MVVM.ViewModel
         public RelayCommand HomeViewCommand { get; set; }
         public RelayCommand SigninViewCommand { get; set; }
         public RelayCommand SignOutCommand { get; set; }
-
-
 
         public HomeView homeVM {  get; set; }
         public SigninView SigninView { get; set; }
@@ -159,9 +157,9 @@ namespace DowngradVPN.MVVM.ViewModel
                             UserData.Id = loginResponse.UserId;
                             UserData.Email = loginResponse.UserEmail;
                             UserData.PasswordHash = loginResponse.UserPassword;
-                            UserData.SessionKey = loginResponse.SessionKey; // Save the session key
+                            UserData.SessionKey = loginResponse.SessionKey;
 
-                            UserData.SaveToFile(); // Save user data after successful login
+                            UserData.SaveToFile();
                         }
                         return true;
                     }
@@ -179,18 +177,12 @@ namespace DowngradVPN.MVVM.ViewModel
         public async Task performLoginAsync()
         {
             if (await LoginAsync(SigninView.Username, SigninView.Password))
-            {
-                
+            {             
                 CurrentView = homeVM;
-                Title = "DowngradVPN(v1.0.1) - Home";
-
-                
-               
-                
+                Title = "DowngradVPN(v1.0.1) - Home"; 
             }
             else
             {
-                
                 Title = "DowngradVPN(v1.0.1) - Sign In";
             }
         }
@@ -204,15 +196,13 @@ namespace DowngradVPN.MVVM.ViewModel
             Title = "DowngradVPN(v1.0.1) - Signining in";
 
             if (UserData.LoadFromFile())
-            {
-                
+            {  
                 CurrentView = homeVM;
                 Title = "DowngradVPN(v1.0.1) - Home";
                 FetchServersAsync();
             }
             else
-            {
-                
+            {  
                 CurrentView = SigninView;
                 Title = "DowngradVPN(v1.0.1) - Signing in";
             }
@@ -220,9 +210,7 @@ namespace DowngradVPN.MVVM.ViewModel
             SignOutCommand = new RelayCommand(o =>
             {
                
-                UserData.ClearData();
-
-               
+                UserData.ClearData();      
                 CurrentView = SigninView;
                 Title = "DowngradVPN(v1.0.1) - Signing in";
             });
@@ -230,9 +218,8 @@ namespace DowngradVPN.MVVM.ViewModel
             {
                
                 //CurrentView = homeVM;
-
                 await performLoginAsync();
-                 await FetchServersAsync();
+                await FetchServersAsync();
                 //if (o is SigninView view)
                 //{
                 //    var username = view.txtUsername.Text;
