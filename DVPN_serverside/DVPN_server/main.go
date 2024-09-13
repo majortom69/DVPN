@@ -14,10 +14,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// sw_downgrad_udp sw_downgrad_udp2 sw_downgrad_udp3 sw_downgrad_udp4 sw_downgrad_udp5
+
 
 // const (
-// 	MYSQL_USER     = "root"
+// 	MYSQL_USER     = "root"s
 // 	MYSQL_PASSWORD = "kvd19212245"
 // 	MYSQL_HOST     = "localhost"
 // 	MYSQL_DATABASE = "DOWNGRADVPN"
