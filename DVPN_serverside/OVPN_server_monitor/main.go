@@ -58,6 +58,8 @@ func readStatusLog(filePath string) (map[string]bool, error) {
 }
 
 func sendUpdatesToServer(changedClients []Client) error {
+
+	//      Server URL
 	url := "http://147.45.77.19:8080/updateClients"
 
 	jsonData, err := json.Marshal(changedClients)
@@ -95,7 +97,6 @@ func monitorClients(logFilePath string) {
 
 		changedClients := []Client{}
 
-		// Check for new clients or disconnected clients
 		for clientName := range currentClients {
 			if !previousClients[clientName] {
 				changedClients = append(changedClients, Client{CommonName: clientName, IsConnected: true})
@@ -117,10 +118,13 @@ func monitorClients(logFilePath string) {
 		}
 
 		previousClients = currentClients
-		time.Sleep(30 * time.Second) // Adjust based on how frequently you want to check
+
+		//         Monitoring Interval
+		time.Sleep(30 * time.Second)
 	}
 }
 
 func main() {
+	//              Log File Path
 	monitorClients("/var/log/openvpn/status.log")
 }
