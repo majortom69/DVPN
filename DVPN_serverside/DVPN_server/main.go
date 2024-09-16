@@ -14,8 +14,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
-
 // const (
 // 	MYSQL_USER     = "root"s
 // 	MYSQL_PASSWORD = "kvd19212245"
@@ -183,16 +181,16 @@ func main() {
 
 	r := gin.Default()
 
-	r.POST("/servers", getUserServers)
+	r.POST("/api/servers", getUserServers)
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"http://localhost:3000"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
 	}))
-	r.POST("/login", loginUser)
+	r.POST("/api/login", loginUser)
 	// убрать этот кринж ебаный и заменить примером с "/downloadfreeclient/:serverID"
-	r.GET("/download/:clientID", func(c *gin.Context) {
+	r.GET("/api/download/:clientID", func(c *gin.Context) {
 		clientID := c.Param("clientID")
 
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DATABASE)
@@ -217,7 +215,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"clientName": clientName})
 	})
 
-	r.GET("/downloadfreeclient/:serverID", func(c *gin.Context) {
+	r.GET("/api/downloadfreeclient/:serverID", func(c *gin.Context) {
 		serverID := c.Param("serverID")
 
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DATABASE)
@@ -255,7 +253,7 @@ func main() {
 		c.File(filePath)
 	})
 
-	r.POST("/updateClients", func(c *gin.Context) {
+	r.POST("/api/updateClients", func(c *gin.Context) {
 		// Parse the incoming JSON data
 		var clients []Client
 		if err := c.ShouldBindJSON(&clients); err != nil {
@@ -295,7 +293,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "Clients updated successfully"})
 	})
 
-	r.POST("/releaseclient/:clientID", releaseClient)
+	r.POST("/api/releaseclient/:clientID", releaseClient)
 
 	r.Run(":8080")
 

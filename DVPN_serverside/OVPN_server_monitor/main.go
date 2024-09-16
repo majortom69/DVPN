@@ -60,7 +60,7 @@ func readStatusLog(filePath string) (map[string]bool, error) {
 func sendUpdatesToServer(changedClients []Client) error {
 
 	//      Server URL
-	url := "http://147.45.77.19:8080/updateClients"
+	url := "https://downgrad.com/api/updateClients"
 
 	jsonData, err := json.Marshal(changedClients)
 	if err != nil {
