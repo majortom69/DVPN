@@ -13,7 +13,7 @@ public static class ClientManager
     {
         if (ReservedClientID == -1) return;
 
-        string url = $"http://147.45.77.19:8080/releaseclient/{ReservedClientID}";
+        string url = $"https://downgrad.com/api/releaseclient/{ReservedClientID}";
         using (HttpClient client = new HttpClient())
         {
             var response = await client.PostAsync(url, null);

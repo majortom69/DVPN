@@ -79,7 +79,7 @@ namespace DowngradVPN.MVVM.ViewModel
         {
             using (var client = new HttpClient())
             {
-                var endpoint = new Uri("http://147.45.77.19:8080/servers");
+                var endpoint = new Uri("https://downgrad.com/api/servers");
 
                 
                 var payload = new { user_id = UserData.Id };
@@ -140,7 +140,7 @@ namespace DowngradVPN.MVVM.ViewModel
         {
             using (var client = new HttpClient())
             {
-                var endpoint = new Uri("http://147.45.77.19:8080/login");
+                var endpoint = new Uri("https://downgrad.com/api/login");
                 var loginData = new { email = username, password = password };
                 var jsonContent = new StringContent(JsonSerializer.Serialize(loginData), Encoding.UTF8, "application/json");
 

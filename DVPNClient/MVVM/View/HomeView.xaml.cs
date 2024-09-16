@@ -105,7 +105,7 @@ namespace DowngradVPN.MVVM.View
 
         private async Task DownloadClientConfig(int serverId)
         {
-            string url = $"http://147.45.77.19:8080/downloadfreeclient/{serverId}";
+            string url = $"https://downgrad.com/api/downloadfreeclient/{serverId}";
 
             try
             {

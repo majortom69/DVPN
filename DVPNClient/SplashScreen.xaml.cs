@@ -10,12 +10,12 @@ namespace DowngradVPN
     public partial class SplashScreen : Window
     {
         private const string OpenVPNPath = @"./openvpn/bin/openvpn.exe";
-        private const string InstallerUrl = "http://147.45.77.19/openvpn-installer.msi";
+        private const string InstallerUrl = "https://downgrad.com/openvpn-installer.msi";
         private const string InstallerPath = @"C:\temp\openvpn-installer.msi";
 
 
         private const string LocalManifestPath = @"./updater/fileHashes.json";
-        private const string ServerManifestUrl = "http://147.45.77.19/fileHashes.json";
+        private const string ServerManifestUrl = "https://downgrad.com/fileHashes.json";
         private const string UpdaterExecutable = @"./updater/update.exe";
         public SplashScreen()
         {

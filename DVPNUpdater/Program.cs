@@ -31,10 +31,10 @@ class Program
         var jsonFilePath1 = Path.Combine(updaterDirectory, "fileHashes.json"); 
 
         // Манифест файл с  последнего обновления 
-        var serverJsonUrl = "http://147.45.77.19/fileHashes.json";
+        var serverJsonUrl = "https://downgrad.com/fileHashes.json";
 
         // Ссылка на директория с самыми последними файлами
-        var filesBaseUrl = "http://147.45.77.19/downgradvpn/"; 
+        var filesBaseUrl = "https://downgrad.com/downgradvpn/"; 
 
         var options = new JsonSerializerOptions
         {
