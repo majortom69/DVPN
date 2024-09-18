@@ -35,7 +35,7 @@ This program monitors the connected clients on an OpenVPN server by reading the 
 ### Конфигурация:
 1. **Server URL**: POST-запрос отправляется на указанный URL.
 2. **Log File Path**: Путь к файлу status.log OpenVPN.
-3. **Monitoring Interval**: Интервал между проверками файла.
+3. **Monitoring Interval**: Интервал между проверками логов на изменения.
 
 ### Инструкции:
 1. Установите Go на ваш комьютер.
