@@ -79,17 +79,14 @@ func loginUser(c *gin.Context) {
 		return
 	}
 
-	// Generate session key
 	sessionKey := generateSessionKey()
 
-	// Update session key in the database
 	_, err = db.Exec("UPDATE USERS SET APP_SESSION_KEY = ? WHERE USER_ID = ?", sessionKey, storedUser.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update session key"})
 		return
 	}
 
-	// Return user data and session key on successful login
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "Login successful",
 		"user_id":     storedUser.ID,
@@ -99,7 +96,7 @@ func loginUser(c *gin.Context) {
 }
 
 func generateSessionKey() string {
-	// Example: generate a random session key
+
 	return fmt.Sprintf("%x", md5.Sum([]byte(time.Now().String())))
 }
 
@@ -108,7 +105,6 @@ func getUserServers(c *gin.Context) {
 		UserID int `json:"user_id"`
 	}
 
-	// Parse the JSON request body
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
@@ -116,7 +112,6 @@ func getUserServers(c *gin.Context) {
 
 	userID := requestBody.UserID
 
-	// MySQL database connection string
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DATABASE)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -124,7 +119,6 @@ func getUserServers(c *gin.Context) {
 	}
 	defer db.Close()
 
-	// Query to fetch the servers for the user ID
 	query := `
         SELECT 
             SERVERS.SERVER_ID, 
@@ -153,7 +147,6 @@ func getUserServers(c *gin.Context) {
 		servers = append(servers, server)
 	}
 
-	// Return the list of servers in JSON format
 	c.JSON(http.StatusOK, gin.H{"servers": servers})
 }
 
@@ -168,7 +161,7 @@ func releaseClient(c *gin.Context) {
 	defer db.Close()
 
 	updateQuery := `UPDATE SERVER_CLIENTS SET IS_USED = 0 WHERE CLIENT_ID = ?`
-	_, err = db.Exec(updateQuery, clientID) // Use = instead of := here
+	_, err = db.Exec(updateQuery, clientID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to release client"})
 		return
@@ -245,23 +238,20 @@ func main() {
 			return
 		}
 
-		// Add the CLIENT_ID to the header
 		c.Header("X-Client-ID", fmt.Sprintf("%d", clientID))
 
-		// Send the corresponding client config file
 		filePath := fmt.Sprintf("./clients/%s.ovpn", clientName)
 		c.File(filePath)
 	})
 
 	r.POST("/api/updateClients", func(c *gin.Context) {
-		// Parse the incoming JSON data
+
 		var clients []Client
 		if err := c.ShouldBindJSON(&clients); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		// Set up the database connection
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DATABASE)
 		db, err := sql.Open("mysql", dsn)
 		if err != nil {
@@ -271,7 +261,6 @@ func main() {
 		}
 		defer db.Close()
 
-		// Process each client in the request
 		for _, client := range clients {
 			var query string
 			if client.IsConnected {
@@ -280,7 +269,6 @@ func main() {
 				query = `UPDATE SERVER_CLIENTS SET IS_USED = 0 WHERE CLIENT_NAME = ?`
 			}
 
-			// Execute the update query
 			_, err := db.Exec(query, client.CommonName)
 			if err != nil {
 				log.Printf("Failed to update client %s: %v", client.CommonName, err)
@@ -289,7 +277,6 @@ func main() {
 			}
 		}
 
-		// Return success response
 		c.JSON(http.StatusOK, gin.H{"message": "Clients updated successfully"})
 	})
 
