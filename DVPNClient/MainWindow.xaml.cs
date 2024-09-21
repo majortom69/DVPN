@@ -26,17 +26,37 @@ namespace DowngradVPN
     public partial class MainWindow : Window
     {
         private TaskbarIcon tb;
-
-
+        private static Mutex _mutex = null;
+        
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+        
         public MainWindow()
         {
+        const string appName = "DowngradVPNApp";
+        _mutex = new Mutex(true, appName, out bool createdNew);
+
+        if (!createdNew)
+            {
+                // Application already running, bring it to the foreground
+                Process currentProcess = Process.GetCurrentProcess();
+                foreach (var process in Process.GetProcessesByName(currentProcess.ProcessName))
+                {
+                    if (process.Id != currentProcess.Id)
+                    {
+                        SetForegroundWindow(process.MainWindowHandle);
+                        break;
+                    }
+                }
+                Application.Current.Shutdown();
+                return;
+            }
 
             InitializeComponent();
-          
-
 
             tb = new TaskbarIcon();
-            tb.Icon = new System.Drawing.Icon("Images/icon.ico"); 
+            tb.Icon = new System.Drawing.Icon("Images/icon.ico");
             tb.ToolTipText = "DowngradVPN";
             tb.ContextMenu = new System.Windows.Controls.ContextMenu();
 
@@ -50,10 +70,7 @@ namespace DowngradVPN
 
             this.StateChanged += MainWindow_StateChanged;
             this.Closing += MainWindow_Closing;
-
-            
         }
-
         
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
