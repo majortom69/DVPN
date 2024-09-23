@@ -11,6 +11,7 @@ using DowngradVPN.MVVM.ViewModel;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
+using System.Windows.Media.Animation;
 namespace DowngradVPN.MVVM.View
 {
     /// <summary>
@@ -35,6 +36,7 @@ namespace DowngradVPN.MVVM.View
 
         private int reservedServerID = -1;
         private int reservedClientID = -1;
+        private int _reservedServerUsage = -1;
 
         public ObservableCollection<CountryItem> Countries { get; set; }
 
@@ -63,29 +65,24 @@ namespace DowngradVPN.MVVM.View
 
 
 
-        private void ShowSpinner(bool isVisible)
-        {
-            LoadingSpinner.Dispatcher.Invoke(() => LoadingSpinner.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed);
-            PowerIcon.Dispatcher.Invoke(() => PowerIcon.Visibility = isVisible ? Visibility.Collapsed : Visibility.Visible);
-        }
-
+       
         public HomeView(MainViewModel viewModel)
         {
             InitializeComponent();
-            ShowSpinner(true); 
+            ShowSpinner(true); // Show spinner until data is fetched
             Loaded += async (s, e) =>
             {
                 await InitializeData(viewModel);
-                ShowSpinner(false);
+                ShowSpinner(false); // Hide spinner after data is ready
             };
         }
 
         private async Task InitializeData(MainViewModel viewModel)
         {
-            await viewModel.FetchServersAsync();
-            InitializeCountries(); 
+            await viewModel.FetchServersAsync(); // Wait for data
+            InitializeCountries(); // Initialize countries after data is fetched
             CountryComboBox.ItemsSource = Countries;
-            CountryComboBox.SelectedIndex = Countries.Any() ? 0 : -1; 
+            CountryComboBox.SelectedIndex = Countries.Any() ? 0 : -1; // Select first if available
         }
 
 
@@ -95,9 +92,10 @@ namespace DowngradVPN.MVVM.View
             {
                 AppendLog($"Selected Country: {selectedCountry.Name}");
 
-                
+                // Fetch the client config file from the server asynchronously
                 //await DownloadClientConfig(selectedCountry.id);
                 reservedServerID = selectedCountry.id;
+                _reservedServerUsage = selectedCountry.usage;
 
             }
         }
@@ -115,7 +113,7 @@ namespace DowngradVPN.MVVM.View
 
                     if (response.IsSuccessStatusCode)
                     {
-                        
+                        // Read the Client ID from the headers
                         if (response.Headers.Contains("X-Client-ID"))
                         {
 
@@ -123,7 +121,7 @@ namespace DowngradVPN.MVVM.View
                             AppendLog($"Reserved Client ID: {ClientManager.ReservedClientID}");
                         }
 
-                       
+                        // Save the client config
                         var clientConfig = await response.Content.ReadAsByteArrayAsync();
                         string filePath = Path.Combine(Environment.CurrentDirectory, "client.ovpn");
                         File.WriteAllBytes(filePath, clientConfig);
@@ -175,69 +173,213 @@ namespace DowngradVPN.MVVM.View
             }
         }
 
-        private async void StartVpn()
-        {
-            await DownloadClientConfig(reservedServerID);
-            string protocol = udpRadioButton.IsChecked == true ? "udp" : "tcp";
-            
-            var processManager = ProcessManager.Instance;
-            processManager.InitializeProcess();
-            var openVpnProcess = processManager.OurProcess;
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+        private void ShowSpinner(bool isVisible)
+        {
+            Dispatcher.Invoke(() =>
             {
-                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "openvpn", "bin", "openvpn.exe"),
-                Arguments = "--config client.ovpn",
-                Verb = "runas",
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
+                SpinnerGrid.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+                PowerIcon.Visibility = isVisible ? Visibility.Collapsed : Visibility.Visible;
+
+                if (isVisible)
+                {
+                    StartSpinnerAnimation();
+                }
+                else
+                {
+                    StopSpinnerAnimation();
+                }
+            });
+        }
+
+        private void StartSpinnerAnimation()
+        {
+          
+            var rotateAnimation = new DoubleAnimation
+            {
+                From = 0,
+                To = 360,
+                Duration = new Duration(TimeSpan.FromSeconds(1)), 
+                RepeatBehavior = RepeatBehavior.Forever
             };
 
-            openVpnProcess.StartInfo = startInfo;
-            openVpnProcess.OutputDataReceived += (sender, e) => AppendLog(e.Data);
-            openVpnProcess.ErrorDataReceived += (sender, e) => AppendLog(e.Data);
-
-            openVpnProcess.Start();
-            openVpnProcess.BeginOutputReadLine();
-            openVpnProcess.BeginErrorReadLine();
-
-            LogTextBox.Dispatcher.Invoke(() => LogTextBox.AppendText("Starting VPN" + Environment.NewLine));
-            await openVpnProcess.WaitForExitAsync();
-            LogTextBox.Dispatcher.Invoke(() => LogTextBox.AppendText("VPN process exited" + Environment.NewLine));
-
-            //string protocol = udpRadioButton.IsChecked == true ? "udp" : "tcp";
-            //openVpnProcess = new Process();
-            //ProcessStartInfo startInfo = new ProcessStartInfo();
-            //startInfo.FileName = @"C:\Program Files\OpenVPN\bin\openvpn.exe";
-            //startInfo.Arguments = $"--config sw_downgrad_{protocol}.ovpn";
-            //startInfo.Verb = "runas";
-            //startInfo.CreateNoWindow = true; // Prevents the terminal window from being displayed
-            //startInfo.UseShellExecute = false; // Allows redirection of standard output and error
-            //startInfo.RedirectStandardOutput = true; // Redirects standard output
-            //startInfo.RedirectStandardError = true; // Redirects standard error
-
-            //openVpnProcess.StartInfo = startInfo;
-            //openVpnProcess.OutputDataReceived += (sender, e) => AppendLog(e.Data);
-            //openVpnProcess.ErrorDataReceived += (sender, e) => AppendLog(e.Data);
-
-            //openVpnProcess.Start();
-            //openVpnProcess.BeginOutputReadLine();
-            //openVpnProcess.BeginErrorReadLine();
-
-            //LogTextBox.Dispatcher.Invoke(() => LogTextBox.AppendText("Starting VPN" + Environment.NewLine));
-            //await openVpnProcess.WaitForExitAsync();
-            //LogTextBox.Dispatcher.Invoke(() => LogTextBox.AppendText("VPN process exited" + Environment.NewLine));
+           
+            SpinnerRotation.BeginAnimation(RotateTransform.AngleProperty, rotateAnimation);
         }
+
+        private void StopSpinnerAnimation()
+        {
+          
+            SpinnerRotation.BeginAnimation(RotateTransform.AngleProperty, null);
+        }
+
+
+        private async void StartVpn()
+        {
+           
+            Dispatcher.Invoke(() =>
+            {
+                powerBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B0BEC5")); // Gray
+                ShowSpinner(true); 
+            });
+
+            bool fatalErrorOccurred = false; 
+            bool connectionSuccessful = false; 
+            try
+            {
+                if (_reservedServerUsage == 100)
+                {
+                    MessageBox.Show("This server is full. Please select another one.");
+                    return;
+                }
+
+                var runningOpenVpnProcesses = Process.GetProcessesByName("openvpn");
+                if (runningOpenVpnProcesses.Length > 0)
+                {
+                    foreach (var process in runningOpenVpnProcesses)
+                    {
+                        try
+                        {
+                            process.Kill();
+                            process.WaitForExit();
+                            Dispatcher.Invoke(() => AppendLog("Killed existing OpenVPN process."));
+                        }
+                        catch (Exception ex)
+                        {
+                            Dispatcher.Invoke(() => AppendLog($"Failed to kill OpenVPN process: {ex.Message}"));
+                        }
+                    }
+                }
+
+                await DownloadClientConfig(reservedServerID);
+                string protocol = udpRadioButton.IsChecked == true ? "udp" : "tcp";
+
+                var processManager = ProcessManager.Instance;
+                processManager.InitializeProcess();
+                var openVpnProcess = processManager.OurProcess;
+
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "openvpn", "bin", "openvpn.exe"),
+                    Arguments = "--config client.ovpn",
+                    Verb = "runas",
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+
+                openVpnProcess.StartInfo = startInfo;
+
+                openVpnProcess.OutputDataReceived += (sender, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                    {
+                        Dispatcher.Invoke(() => AppendLog(e.Data));
+
+                        if (e.Data.Contains("Exiting due to fatal error"))
+                        {
+                            fatalErrorOccurred = true;
+                            Dispatcher.Invoke(() =>
+                            {
+                                powerBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F44336")); // Red
+                                AppendLog("Fatal error detected! Changing button to red.");
+                            });
+                            ClientManager.ReleaseClientAsync();
+                        }
+
+                        if (e.Data.Contains("Initialization Sequence Completed"))
+                        {
+                            connectionSuccessful = true;
+                            Dispatcher.Invoke(() =>
+                            {
+                                ShowSpinner(false);
+                                powerBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4CAF50")); // Green
+                                AppendLog("Connection successful! Changing button to green.");
+                            });
+                        }
+                    }
+                };
+
+                openVpnProcess.ErrorDataReceived += (sender, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                    {
+                        Dispatcher.Invoke(() => AppendLog(e.Data));
+
+                        if (e.Data.Contains("Exiting due to fatal error"))
+                        {
+                            fatalErrorOccurred = true;
+                            Dispatcher.Invoke(() =>
+                            {
+                                powerBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F44336")); // Red
+                                AppendLog("Fatal error detected! Changing button to red.");
+                            });
+                            ClientManager.ReleaseClientAsync();
+                        }
+                    }
+                };
+
+                openVpnProcess.Start();
+                openVpnProcess.BeginOutputReadLine();
+                openVpnProcess.BeginErrorReadLine();
+
+                Dispatcher.Invoke(() => AppendLog("Starting VPN"));
+                await openVpnProcess.WaitForExitAsync();
+
+                if (!fatalErrorOccurred && connectionSuccessful)
+                {
+                    // Connection successful, button is already green
+                }
+                else if (!fatalErrorOccurred)
+                {
+                    Dispatcher.Invoke(() => AppendLog("VPN process exited without fatal error, but connection was not established."));
+                }
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    powerBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F44336")); // Red
+                    AppendLog($"Error starting VPN: {ex.Message}");
+                });
+                ClientManager.ReleaseClientAsync();
+            }
+            finally
+            {
+
+                Dispatcher.Invoke(() =>
+                {
+                    ShowSpinner(false); // Hide the spinner
+                });
+            }
+        }
+
+
+
+
+
 
         private void StopVpn()
         {
-            var processManager = ProcessManager.Instance;
-            processManager.KillProcess();
-            AppendLog($"Client released{ClientManager.ReservedClientID}");
-          
-            LogTextBox.Dispatcher.Invoke(() => LogTextBox.AppendText("Stopping VPN" + Environment.NewLine));
+            try
+            {
+                ShowSpinner(true);
+                var processManager = ProcessManager.Instance;
+                processManager.KillProcess();
+                AppendLog($"Client released {ClientManager.ReservedClientID}");
+
+                // Change button back to blue (default) when VPN is stopped
+                
+
+                AppendLog("Stopping VPN");
+                powerBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2196F3")); // Blue
+                ShowSpinner(true);
+            }
+            catch (Exception ex)
+            {
+                AppendLog($"Error stopping VPN: {ex.Message}");
+            }
         }
         //private void AppendLog(string logMessage)
         //{
@@ -315,7 +457,7 @@ namespace DowngradVPN.MVVM.View
         //{
         //    LogTextBox.Dispatcher.Invoke(() => LogTextBox.AppendText($"Failed to start OpenVPN: {ex.Message}\n"));
         //}
-    //}
+        //}
 
         //private void disconnect()
         //{

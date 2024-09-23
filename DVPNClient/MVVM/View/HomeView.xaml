@@ -9,6 +9,7 @@
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="530" d:DesignWidth="360">
+
     <StackPanel>
 
         
@@ -23,18 +24,32 @@
             <RadioButton IsChecked="True" x:Name="udpRadioButton"  Content="UDP" GroupName="Protocol" Margin="10"/>
             <RadioButton x:Name="tcpRadioButton" Content="TCP" GroupName="Protocol" Margin="10"/>
         </StackPanel>
-        <Button x:Name="powerBtn" Click="OnClick3" Width="150" Height="150" Margin="0 20 0 0 " 
-                    Style="{StaticResource MaterialDesignFloatingActionButton}" 
-                    materialDesign:ButtonAssist.CornerRadius="75" 
-                    materialDesign:ShadowAssist.Darken="True">
+        <Button x:Name="powerBtn" Click="OnClick3" Width="150" Height="150" Margin="0 20 0 0"
+        Style="{StaticResource MaterialDesignFloatingActionButton}" 
+        Background="#2196F3"
+        materialDesign:ButtonAssist.CornerRadius="75"
+        materialDesign:ShadowAssist.Darken="True">
             <Button.Content>
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <!-- Power Icon -->
                     <materialDesign:PackIcon x:Name="PowerIcon" Kind="Power" Width="50" Height="50" Visibility="Visible"/>
-                    <ProgressBar x:Name="LoadingSpinner" Width="50" Height="50" Visibility="Collapsed"
-                                 IsIndeterminate="True" />
+
+                    <!-- Circular Loading Spinner -->
+                    <Grid x:Name="SpinnerGrid" Width="150" Height="150" Visibility="Collapsed">
+                        <Ellipse StrokeThickness="5" Stroke="White" Width="50" Height="50"
+                         StrokeDashArray="5, 10" StrokeDashCap="Round">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform x:Name="SpinnerRotation" CenterX="25" CenterY="25"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </Grid>
                 </Grid>
             </Button.Content>
         </Button>
+
+
+
+
         <ComboBox x:Name="CountryComboBox" Width="300" Margin="10" Height="50"
                   HorizontalAlignment="Center"
                   VerticalContentAlignment="Center"

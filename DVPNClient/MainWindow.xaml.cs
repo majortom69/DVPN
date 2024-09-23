@@ -16,6 +16,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System;
+using System.Runtime.InteropServices;
 
 
 namespace DowngradVPN
@@ -27,19 +28,19 @@ namespace DowngradVPN
     {
         private TaskbarIcon tb;
         private static Mutex _mutex = null;
-        
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SetForegroundWindow(IntPtr hWnd);
-        
+
         public MainWindow()
         {
-        const string appName = "DowngradVPNApp";
-        _mutex = new Mutex(true, appName, out bool createdNew);
+            const string appName = "DowngradVPNApp";
+            _mutex = new Mutex(true, appName, out bool createdNew);
 
-        if (!createdNew)
+            if (!createdNew)
             {
-                // Application already running, bring it to the foreground
+               
                 Process currentProcess = Process.GetCurrentProcess();
                 foreach (var process in Process.GetProcessesByName(currentProcess.ProcessName))
                 {
@@ -71,7 +72,9 @@ namespace DowngradVPN
             this.StateChanged += MainWindow_StateChanged;
             this.Closing += MainWindow_Closing;
         }
+
         
+
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
@@ -92,6 +95,7 @@ namespace DowngradVPN
         {
             this.Show();
             this.WindowState = WindowState.Normal;
+            this.Activate();
         }
 
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
