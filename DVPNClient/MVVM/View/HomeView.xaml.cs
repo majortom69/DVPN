@@ -350,7 +350,7 @@ namespace DowngradVPN.MVVM.View
 
                 Dispatcher.Invoke(() =>
                 {
-                    ShowSpinner(false); // Hide the spinner
+                    ShowSpinner(false); 
                 });
             }
         }
@@ -369,7 +369,7 @@ namespace DowngradVPN.MVVM.View
                 processManager.KillProcess();
                 AppendLog($"Client released {ClientManager.ReservedClientID}");
 
-                // Change button back to blue (default) when VPN is stopped
+               
                 
 
                 AppendLog("Stopping VPN");
