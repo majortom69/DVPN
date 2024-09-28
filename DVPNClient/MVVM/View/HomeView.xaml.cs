@@ -100,6 +100,45 @@ namespace DowngradVPN.MVVM.View
             }
         }
 
+//         private async Task DownloadClientConfig(int serverId)
+//      {
+//          string protocol = ovpnRadioButton.IsChecked == true ? "ovpn" : "wgrd";
+//          string url = $"http://localhost:7070/api/downloadfreeclient/{serverId}?protocol={protocol}";
+        
+//          try
+//          {
+//              using (HttpClient client = new HttpClient())
+//              {
+//                  HttpResponseMessage response = await client.GetAsync(url);
+        
+//                  if (response.IsSuccessStatusCode)
+//                  {
+//                      // Read the Client ID from the headers
+//                      if (response.Headers.Contains("X-Client-ID"))
+//                      {
+//                          ClientManager.ReservedClientID = int.Parse(response.Headers.GetValues("X-Client-ID").FirstOrDefault());
+//                          AppendLog($"Reserved Client ID: {ClientManager.ReservedClientID}");
+//                      }
+        
+//                      // Save the client config
+//                      var clientConfig = await response.Content.ReadAsByteArrayAsync();
+//                      string filePath = Path.Combine(Environment.CurrentDirectory, $"client.{(protocol == "ovpn" ? "ovpn" : "conf")}");
+//                      File.WriteAllBytes(filePath, clientConfig);
+        
+//                      AppendLog($"Downloaded and saved client config to: {filePath}");
+//                  }
+//                  else
+//                  {
+//                      AppendLog("Failed to download client config");
+//                  }
+//              }
+//          }
+//          catch (Exception ex)
+//          {
+//              AppendLog($"Error while downloading client config: {ex.Message}");
+//          }
+//      }
+
 
         private async Task DownloadClientConfig(int serverId)
         {
